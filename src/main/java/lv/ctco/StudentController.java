@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,39 +29,50 @@ public class StudentController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> addStudent(@RequestBody Student student) {
         students.add(student);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getStudentById(@PathVariable("id") long id) {
-        Student student = students.stream()
+        Optional<Student> student = students.stream()
                 .filter(s -> s.getId() == id)
-                .findFirst()
-                .get();
-        return new ResponseEntity<>(student, HttpStatus.OK);
+                .findFirst();
+
+        if (student.isPresent())
+            return new ResponseEntity<>(student.get(), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 
     @RequestMapping(path = " /{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStudentByID(@PathVariable("id") long id,
                                                @RequestBody Student student) {
-        Student student2 = students.stream()
+        Optional<Student> student2 = students.stream()
                 .filter(s -> s.getId() == id)
-                .findFirst()
-                .get();
-        student2.setName(student.getName());
-        student2.setSurname(student.getSurname());
-        return new ResponseEntity<>(HttpStatus.OK);
+                .findFirst();
+        if (student2.isPresent()) {
+            student2.get().setName(student.getName());
+            student2.get().setSurname(student.getSurname());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteById(@PathVariable("id") long id) {
+        int pre = students.size();
         students = students.stream()
                 .filter((s) -> s.getId() != id)
                 .collect(Collectors.toList());
+        int post = students.size();
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (pre == post)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        else
+            return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
