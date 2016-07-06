@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringApplicationConfiguration(classes = StudentcountApplication.class)
 @WebAppConfiguration
 @IntegrationTest("server.port:8090")
-public class StudentcountApplicationTests {
+public class StudentCountApplicationTests {
 	public static final int OK = HttpStatus.OK.value();
 	public static final int NOT_FOUND = HttpStatus.NOT_FOUND.value();
 	public static final int CREATED = HttpStatus.CREATED.value();
