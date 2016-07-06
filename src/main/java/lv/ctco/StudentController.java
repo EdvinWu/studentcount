@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/students")
@@ -55,10 +56,10 @@ public class StudentController {
 
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteById(@PathVariable("id") long id) {
-        students.remove(students.stream()
-                .filter(s -> s.getId() == id)
-                .findFirst()
-                .get());
+        students = students.stream()
+                .filter((s) -> s.getId() != id)
+                .collect(Collectors.toList());
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
