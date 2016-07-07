@@ -1,6 +1,8 @@
 package lv.ctco;
 
+import com.sun.xml.internal.ws.client.sei.ResponseBuilder;
 import io.restassured.RestAssured;
+import io.restassured.http.Headers;
 import io.restassured.parsing.Parser;
 import lv.ctco.student.Student;
 import org.junit.Before;
@@ -35,8 +37,8 @@ public class StudentCountApplicationAssuredTests {
 		Student student = new Student();
 		student.setName("John");
 		student.setSurname("Snow");
-		given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
-		get("/students").then().statusCode(OK);
+		Headers header = given().contentType("application/json").body(student).when().post("/students").getHeaders();
+		get(header.getValue("Location")).then().statusCode(OK);
 	}
 
 	@Test
@@ -50,8 +52,8 @@ public class StudentCountApplicationAssuredTests {
 		student.setName("John");
 		student.setSurname("Snow");
 
-		given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
-		get("/students/1").then().body("name", equalTo("John"));
+		Headers header = given().contentType("application/json").body(student).when().post("/students").getHeaders();
+		get(header.getValue("Location")).then().body("name", equalTo("John"));
 	}
 
 	@Test
@@ -61,7 +63,7 @@ public class StudentCountApplicationAssuredTests {
 
 	@Test
 	public void testDeleteByIDNotFound() {
-		delete("/students/456456").then().statusCode(NOT_FOUND);
+		delete("/students/-1").then().statusCode(NOT_FOUND);
 	}
 
 	@Test
@@ -69,8 +71,8 @@ public class StudentCountApplicationAssuredTests {
         Student student = new Student();
         student.setName("John");
 		student.setSurname("Snow");
-        given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
-		delete("/students/1").then().statusCode(OK);
+		Headers header = given().contentType("application/json").body(student).when().post("/students").getHeaders();
+		delete(header.getValue("Location")).then().statusCode(OK);
 	}
 
 	@Test
@@ -80,7 +82,7 @@ public class StudentCountApplicationAssuredTests {
 		student.setSurname("Snow");
 		given().contentType("application/json").body(student)
 				.when().post("/students")
-				.then().statusCode(CREATED).log().all();
+				.then().statusCode(CREATED);
 	}
 
 	@Test
@@ -90,14 +92,13 @@ public class StudentCountApplicationAssuredTests {
 		student.setSurname("Snow123");
 
 
-		given().contentType("application/json").body(student)
-				.when().post("/students/")
-				.then().statusCode(CREATED);
+		Headers header = given().contentType("application/json").body(student)
+				.when().post("/students/").getHeaders();
 
 		student.setName("Joe");
 		student.setSurname("XO");
 		given().contentType("application/json").body(student)
-				.when().put("students/1")
+				.when().put(header.getValue("Location"))
 				.then().statusCode(OK);
 	}
 
