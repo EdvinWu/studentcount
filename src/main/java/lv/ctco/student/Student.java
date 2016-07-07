@@ -3,6 +3,7 @@ package lv.ctco.student;
 import lv.ctco.Assignment;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public class Student {
     private String name;
     private String surname;
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Assignment> assignments;
+    private List<Assignment> assignments = new ArrayList<>();
 
 
     public long getId() {

@@ -1,6 +1,7 @@
 package lv.ctco;
 
 import io.restassured.RestAssured;
+import io.restassured.parsing.Parser;
 import lv.ctco.student.Student;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,7 @@ public class StudentCountApplicationAssuredTests {
 	@Before
 	public void before(){
 		RestAssured.port = 8090;
+		RestAssured.defaultParser = Parser.JSON;
 	}
 
 	@Test
@@ -49,7 +51,7 @@ public class StudentCountApplicationAssuredTests {
 		student.setSurname("Snow");
 
 		given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
-		get("/students/1").then().contentType("application/json").body("name", equalTo("John"));
+		get("/students/1").then().body("name", equalTo("John"));
 	}
 
 	@Test
@@ -78,7 +80,7 @@ public class StudentCountApplicationAssuredTests {
 		student.setSurname("Snow");
 		given().contentType("application/json").body(student)
 				.when().post("/students")
-				.then().statusCode(CREATED);
+				.then().statusCode(CREATED).log().all();
 	}
 
 	@Test
