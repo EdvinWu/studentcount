@@ -1,14 +1,12 @@
-package lv.ctco;
+package lv.ctco.student;
 
+import lv.ctco.Assignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/students")
@@ -56,16 +54,28 @@ public class StudentController {
         }
     }
 
-
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteById(@PathVariable("id") long id) {
         if (studentRepository.exists(id)) {
             studentRepository.delete(id);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         else
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @RequestMapping(path = "/{id}/assignment", method = RequestMethod.POST)
+    public ResponseEntity<?> addAssignment(@PathVariable("id") long id, @RequestBody Assignment assignment) {
+        if (studentRepository.exists(id)) {
+            Student student = studentRepository.findOne(id);
+            student.addAssignment(assignment);
+            studentRepository.save(student);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
 
 
 }

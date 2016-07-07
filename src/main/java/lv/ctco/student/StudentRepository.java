@@ -1,4 +1,4 @@
-package lv.ctco;
+package lv.ctco.student;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

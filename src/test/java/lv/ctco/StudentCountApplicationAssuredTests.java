@@ -1,6 +1,7 @@
 package lv.ctco;
 
 import io.restassured.RestAssured;
+import lv.ctco.student.Student;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,7 @@ public class StudentCountApplicationAssuredTests {
 	public void testGetOK() {
 		Student student = new Student();
 		student.setName("John");
-		student.setName("Snow");
+		student.setSurname("Snow");
 		given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
 		get("/students").then().statusCode(OK);
 	}
@@ -45,9 +46,10 @@ public class StudentCountApplicationAssuredTests {
 	public void testGetByIDOK() {
 		Student student = new Student();
 		student.setName("John");
-		student.setName("Snow");
+		student.setSurname("Snow");
+
 		given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
-		get("/students/1").then().contentType("application/json").body("name", equalTo("Name"));
+		get("/students/1").then().contentType("application/json").body("name", equalTo("John"));
 	}
 
 	@Test
@@ -64,7 +66,7 @@ public class StudentCountApplicationAssuredTests {
 	public void testDeleteByIDOK() {
         Student student = new Student();
         student.setName("John");
-        student.setName("Snow");
+		student.setSurname("Snow");
         given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
 		delete("/students/1").then().statusCode(OK);
 	}
@@ -73,7 +75,7 @@ public class StudentCountApplicationAssuredTests {
 	public void testPostOK() {
 		Student student = new Student();
 		student.setName("John");
-		student.setName("Snow");
+		student.setSurname("Snow");
 		given().contentType("application/json").body(student)
 				.when().post("/students")
 				.then().statusCode(CREATED);
@@ -83,7 +85,7 @@ public class StudentCountApplicationAssuredTests {
 	public void testPutOK() {
 		Student student = new Student();
 		student.setName("John123");
-		student.setName("Snow123");
+		student.setSurname("Snow123");
 
 
 		given().contentType("application/json").body(student)

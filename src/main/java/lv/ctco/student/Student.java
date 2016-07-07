@@ -1,6 +1,9 @@
-package lv.ctco;
+package lv.ctco.student;
+
+import lv.ctco.Assignment;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "STUDENT") //if table has different name from class
@@ -12,6 +15,9 @@ public class Student {
     private long id;
     private String name;
     private String surname;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Assignment> assignments;
+
 
     public long getId() {
         return id;
@@ -36,4 +42,20 @@ public class Student {
     public void setSurname(String surname) {
         this.surname = surname;
     }
+
+    public List<Assignment> getAssignments() {
+        return assignments;
+    }
+
+    public void setAssignments(List<Assignment> assignments) {
+        this.assignments.clear();
+        if (assignments != null)
+            this.assignments.addAll(assignments);
+    }
+
+    public  void addAssignment(Assignment assignment) {
+        this.assignments.add(assignment);
+    }
+
+
 }
