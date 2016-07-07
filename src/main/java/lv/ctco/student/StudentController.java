@@ -7,8 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,10 +26,14 @@ public class StudentController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> addStudent(@RequestBody Student student) {
+    public ResponseEntity<?> addStudent(@RequestBody Student student, UriComponentsBuilder b) {
         studentRepository.save(student);
+
+        UriComponents uriComponents =
+                b.path("/students/{id}").buildAndExpand(student.getId());
+
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setLocation(URI.create("/students/"+student.getId()));
+        responseHeaders.setLocation(uriComponents.toUri());
         return new ResponseEntity<String>(responseHeaders,HttpStatus.CREATED);
     }
 
