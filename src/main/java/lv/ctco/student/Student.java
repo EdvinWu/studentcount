@@ -65,5 +65,18 @@ public class Student {
         return assignment.isPresent() && assignments.remove(assignment.get());
     }
 
+    public boolean updateAssignment(Assignment enteredAssignment){
+        Optional<Assignment> assignment = assignments.stream()
+                .filter(a -> a.getId() == enteredAssignment.getId())
+                .findAny();
+        if (assignment.isPresent()){
+            assignment.get().setName(enteredAssignment.getName());
+            return true;
+        }
+        return false;
+    }
+
+
+
 
 }
