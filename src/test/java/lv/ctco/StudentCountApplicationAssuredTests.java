@@ -14,7 +14,7 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = StudentcountApplication.class)
+@SpringApplicationConfiguration(classes = StudentCountApplication.class)
 @WebAppConfiguration
 @IntegrationTest("server.port:8090")
 public class StudentCountApplicationAssuredTests {
