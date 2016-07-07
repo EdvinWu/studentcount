@@ -4,6 +4,7 @@ import lv.ctco.Assignment;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "STUDENT") //if table has different name from class
@@ -55,6 +56,13 @@ public class Student {
 
     public  void addAssignment(Assignment assignment) {
         this.assignments.add(assignment);
+    }
+
+    public boolean removeAssignmentById(long id) {
+        Optional<Assignment> assignment = assignments.stream()
+                .filter(a -> a.getId() == id)
+                .findAny();
+        return assignment.isPresent() && assignments.remove(assignment.get());
     }
 
 

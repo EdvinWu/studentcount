@@ -4,6 +4,7 @@ import lv.ctco.Assignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -75,6 +76,19 @@ public class StudentController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @Transactional
+    @RequestMapping(path = "/{id}/assignment/{aId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteAssignmentById(@PathVariable("id") long id,
+            @PathVariable("aId") long aId, @RequestBody Assignment assignment) {
+        if (studentRepository.exists(id)) {
+            Student student = studentRepository.findOne(id);
+            if (student.removeAssignmentById(aId)){
+
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
 
 
