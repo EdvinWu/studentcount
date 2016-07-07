@@ -2,11 +2,13 @@ package lv.ctco.student;
 
 import lv.ctco.Assignment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,7 +27,9 @@ public class StudentController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> addStudent(@RequestBody Student student) {
         studentRepository.save(student);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setLocation(URI.create("/students/"+student.getId()));
+        return new ResponseEntity<String>(responseHeaders,HttpStatus.CREATED);
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
