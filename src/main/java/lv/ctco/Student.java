@@ -1,10 +1,17 @@
 package lv.ctco;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "STUDENT") //if table has different name from class
 public class Student {
+
+    @Id //marks column ad id
+    @GeneratedValue //generate id automatically
+    @Column(name = "ID") //if column in table has different column name
+    private long id;
     private String name;
     private String surname;
-    private long id;
-    private static long globalId = 0;
 
     public long getId() {
         return id;
@@ -12,10 +19,6 @@ public class Student {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Student() {
-        id = globalId++;
     }
 
     public String getName() {

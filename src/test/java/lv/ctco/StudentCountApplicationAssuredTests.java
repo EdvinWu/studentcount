@@ -29,6 +29,10 @@ public class StudentCountApplicationAssuredTests {
 
 	@Test
 	public void testGetOK() {
+		Student student = new Student();
+		student.setName("John");
+		student.setName("Snow");
+		given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
 		get("/students").then().statusCode(OK);
 	}
 
@@ -39,13 +43,16 @@ public class StudentCountApplicationAssuredTests {
 
 	@Test
 	public void testGetByIDOK() {
-
-		get("/students/0").then().body("name", equalTo("Name"));
+		Student student = new Student();
+		student.setName("John");
+		student.setName("Snow");
+		given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
+		get("/students/1").then().contentType("application/json").body("name", equalTo("Name"));
 	}
 
 	@Test
 	public void testGetByIDNotFound() {
-		get("/students/1").then().statusCode(NOT_FOUND);
+		get("/students/-1").then().statusCode(NOT_FOUND);
 	}
 
 	@Test
@@ -58,9 +65,8 @@ public class StudentCountApplicationAssuredTests {
         Student student = new Student();
         student.setName("John");
         student.setName("Snow");
-        student.setId(-1);
         given().contentType("application/json").body(student).when().post("/students").then().statusCode(CREATED);
-		delete("/students/-1").then().statusCode(OK);
+		delete("/students/1").then().statusCode(OK);
 	}
 
 	@Test
@@ -78,14 +84,16 @@ public class StudentCountApplicationAssuredTests {
 		Student student = new Student();
 		student.setName("John123");
 		student.setName("Snow123");
-		student.setId(-4);
+
+
 		given().contentType("application/json").body(student)
 				.when().post("/students/")
 				.then().statusCode(CREATED);
+
 		student.setName("Joe");
 		student.setSurname("XO");
 		given().contentType("application/json").body(student)
-				.when().put("students/-4")
+				.when().put("students/1")
 				.then().statusCode(OK);
 	}
 
@@ -93,7 +101,7 @@ public class StudentCountApplicationAssuredTests {
 	public void testPutFails() {
 		Student student = new Student();
 		given().contentType("application/json").body(student)
-				.when().put("students/666")
+				.when().put("students/-1")
 				.then().statusCode(NOT_FOUND);
 	}
 

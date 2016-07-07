@@ -1,5 +1,6 @@
 package lv.ctco;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,33 +14,28 @@ import java.util.stream.Collectors;
 @RequestMapping("/students")
 public class StudentController {
 
-    List<Student> students = new ArrayList<Student>() {{
-        Student student = new Student();
-        student.setName("Name");
-        student.setSurname("Surname");
-        add(student);
-    }};
-
+    @Autowired //same as Inject
+    StudentRepository studentRepository;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getAllStudents() {
+        List<Student> students = studentRepository.findAll();
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> addStudent(@RequestBody Student student) {
-        students.add(student);
+        studentRepository.save(student);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getStudentById(@PathVariable("id") long id) {
-        Optional<Student> student = students.stream()
-                .filter(s -> s.getId() == id)
-                .findFirst();
 
-        if (student.isPresent())
-            return new ResponseEntity<>(student.get(), HttpStatus.OK);
+        if (studentRepository.exists(id)) {
+            Student student = studentRepository.findOne(id);
+            return new ResponseEntity<>(student, HttpStatus.OK);
+        }
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -48,12 +44,12 @@ public class StudentController {
     @RequestMapping(path = " /{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStudentByID(@PathVariable("id") long id,
                                                @RequestBody Student student) {
-        Optional<Student> student2 = students.stream()
-                .filter(s -> s.getId() == id)
-                .findFirst();
-        if (student2.isPresent()) {
-            student2.get().setName(student.getName());
-            student2.get().setSurname(student.getSurname());
+
+        if (studentRepository.exists(id)) {
+            Student editedStudent = studentRepository.findOne(id);
+            editedStudent.setName(student.getName());
+            editedStudent.setSurname(student.getSurname());
+            studentRepository.save(editedStudent);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -63,14 +59,10 @@ public class StudentController {
 
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteById(@PathVariable("id") long id) {
-        int pre = students.size();
-        students = students.stream()
-                .filter((s) -> s.getId() != id)
-                .collect(Collectors.toList());
-        int post = students.size();
-
-        if (pre == post)
+        if (studentRepository.exists(id)) {
+            studentRepository.delete(id);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         else
             return new ResponseEntity<>(HttpStatus.OK);
     }
